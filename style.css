@@ -2452,3 +2452,91 @@ body.feed-view .wind-delete-btn.pending {
   opacity: 0.65;
   pointer-events: none;
 }
+
+/* ==================================================
+   SIMPLE MODE OVERRIDES (requested)
+   ================================================== */
+
+/* Keep the app easier to maintain: flatter surfaces, less visual effects */
+body.feed-view .feed-sidebar,
+body.feed-view .right-toolbar,
+body.profile-view .feed-sidebar,
+body.profile-view .right-toolbar,
+body.profile-view .profile-main,
+body.feed-view .wind-card,
+body.profile-view .profile-feed-card,
+body.profile-view .profile-edit-panel,
+body.profile-view .profile-identity-card {
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  border-radius: 12px !important;
+}
+
+body.feed-view .sidebar-btn,
+body.profile-view .sidebar-btn,
+body.profile-view .profile-tab,
+body.feed-view .secondary-btn,
+body.profile-view .secondary-btn {
+  transition: none !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+body.feed-view .wind-card:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Cloud composer adjustments:
+   - move cloud higher
+   - make it a bit longer (wider) without stretch
+   - preserve shape on browser zoom changes */
+body.feed-view .wind-compose {
+  background-image: none !important;
+  min-height: auto !important;
+  padding: clamp(72px, 9vw, 92px) 18px 18px !important;
+  position: sticky;
+  top: 8px;
+  overflow: visible !important;
+}
+
+body.feed-view .wind-compose::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: clamp(-34px, -3.2vw, -16px);
+  transform: translateX(-50%);
+  width: min(90%, 860px);
+  aspect-ratio: 3.9 / 1;
+  background-image: url("images/question_cloud.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.feed-view .wind-compose::after {
+  content: none !important;
+}
+
+body.feed-view .wind-compose > * {
+  position: relative;
+  z-index: 1;
+}
+
+body.feed-view .wind-compose textarea {
+  background: rgba(2, 6, 23, 0.52) !important;
+  border: 1px solid rgba(148, 163, 184, 0.45) !important;
+  border-radius: 10px !important;
+}
+
+@media (max-width: 900px) {
+  body.feed-view .wind-compose {
+    padding: 60px 12px 14px !important;
+  }
+
+  body.feed-view .wind-compose::before {
+    width: 96%;
+  }
+}
