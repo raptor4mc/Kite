@@ -2293,3 +2293,140 @@ body.feed-view #feedNotice {
     padding: 30px 22px 40px !important;
   }
 }
+
+/* ==================================================
+   FINISHING PASS — COHESIVE APP LOOK
+   ================================================== */
+body.feed-view,
+body.profile-view {
+  color: #e2e8f0;
+}
+
+body.feed-view .feed-page,
+body.profile-view .feed-page {
+  gap: 14px;
+  padding: 14px;
+}
+
+body.feed-view .feed-sidebar,
+body.feed-view .right-toolbar,
+body.profile-view .feed-sidebar,
+body.profile-view .right-toolbar,
+body.profile-view .profile-main {
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 18px;
+  box-shadow: 0 12px 34px rgba(2, 6, 23, 0.38);
+}
+
+body.feed-view .feed-sidebar,
+body.feed-view .right-toolbar,
+body.profile-view .feed-sidebar,
+body.profile-view .right-toolbar {
+  padding: 18px;
+}
+
+body.feed-view .feed-main,
+body.profile-view .profile-main {
+  border-radius: 20px;
+}
+
+body.feed-view .feed-header {
+  padding: 8px 4px 0;
+  margin-bottom: 14px;
+}
+
+body.feed-view .feed-header h1,
+body.profile-view .profile-header h1 {
+  font-size: clamp(1.35rem, 1.9vw, 1.7rem);
+  font-weight: 800;
+}
+
+body.feed-view .feed-header p,
+body.profile-view .profile-handle,
+body.profile-view .profile-meta {
+  color: #b7c5d8;
+}
+
+body.feed-view .sidebar-btn,
+body.profile-view .sidebar-btn,
+body.profile-view .profile-tab,
+body.feed-view .secondary-btn,
+body.profile-view .secondary-btn {
+  border-radius: 12px;
+  transition: transform 0.14s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+body.feed-view .sidebar-btn:hover,
+body.profile-view .sidebar-btn:hover,
+body.profile-view .profile-tab:hover,
+body.feed-view .secondary-btn:hover,
+body.profile-view .secondary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.35);
+}
+
+body.feed-view .wind-compose {
+  border-radius: 22px !important;
+}
+
+body.feed-view .wind-compose textarea,
+body.feed-view .discover-search input,
+body.feed-view .right-search,
+body.profile-view .profile-edit-row input,
+body.profile-view .profile-edit-row textarea {
+  border-radius: 12px;
+}
+
+body.feed-view .wind-card,
+body.profile-view .profile-feed-card,
+body.profile-view .profile-edit-panel,
+body.profile-view .profile-identity-card {
+  border-radius: 16px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 10px 24px rgba(2, 6, 23, 0.3);
+}
+
+body.feed-view .wind-text,
+body.profile-view .profile-feed-text {
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+body.feed-view .wind-meta,
+body.profile-view .profile-feed-meta {
+  color: #9fb1c7;
+}
+
+body.feed-view .chat-send-btn,
+body.profile-view .primary-btn {
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+body.feed-view .feed-like-btn {
+  border-radius: 999px;
+  min-width: 56px;
+}
+
+body.feed-view .feed-like-btn.liked {
+  border-color: rgba(99, 102, 241, 0.8);
+  box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.35);
+}
+
+body.profile-view .profile-tabs {
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+body.profile-view .profile-tab.active {
+  background: rgba(99, 102, 241, 0.12);
+}
+
+@media (max-width: 1000px) {
+  body.feed-view .feed-page,
+  body.profile-view .feed-page {
+    padding: 10px;
+    gap: 10px;
+  }
+}
