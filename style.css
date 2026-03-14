@@ -2050,20 +2050,35 @@ body {
   }
 }
 
-/* Home + Explore should feel like winds floating over the page background */
-.feed-main,
-.feed-main-inner,
-.wind-feed {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  backdrop-filter: none !important;
+/* Home + Explore: keep winds floating over the background without affecting Profile */
+body.feed-view .feed-main {
+  background: rgba(8, 14, 30, 0.4);
+  border-left: none;
+  border-right: none;
 }
 
-.wind-feed {
+body.feed-view .feed-main-inner {
+  background: transparent;
+}
+
+body.feed-view .wind-feed {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
   padding: 10px 6px 24px;
 }
 
-.wind-card {
+body.feed-view .wind-card {
   background: rgba(8, 14, 30, 0.78);
+}
+
+/* Keep Profile readable/solid and avoid accidental transparency regressions */
+body.profile-view .feed-main,
+body.profile-view .profile-main,
+body.profile-view .profile-feed-card,
+body.profile-view .profile-edit-panel,
+body.profile-view .profile-identity-card,
+body.profile-view .profile-tabs {
+  background: rgba(8, 14, 30, 0.72);
 }
