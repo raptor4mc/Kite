@@ -35,6 +35,11 @@
           <p id="feedSubtitle">Winds from people you follow and who they follow.</p>
         </header>
 
+        <section id="discoverSearch" class="discover-search hidden">
+          <label for="hashtagSearchInput">Search hashtags in Explore</label>
+          <input id="hashtagSearchInput" type="text" placeholder="#kite" />
+        </section>
+
         <section class="wind-compose">
           <label for="chatInput">Drop a wind (max 120 chars)</label>
           <textarea id="chatInput" maxlength="120" placeholder="What's blowing through your head?"></textarea>
@@ -74,6 +79,8 @@
     const profileTabBtn = document.getElementById("profileTabBtn");
     const feedTitle = document.getElementById("feedTitle");
     const feedSubtitle = document.getElementById("feedSubtitle");
+    const discoverSearch = document.getElementById("discoverSearch");
+    const hashtagSearchInput = document.getElementById("hashtagSearchInput");
     const feedPage = document.getElementById("feedPage");
     const sidebarCloseBtn = document.getElementById("sidebarCloseBtn");
     const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
@@ -85,8 +92,10 @@
     const commentUnsubscribers = new Map();
     let activeFeedView = "home";
     let homeAuthors = new Set();
+    let currentUser = null;
     const likedWindIds = new Set();
     const likedCommentIds = new Set();
+    let hashtagFilter = "";
 
     function showNotice(text) {
       feedNotice.textContent = text;
@@ -101,6 +110,23 @@
     function normalizeId(value) {
       return String(value || "").trim().toLowerCase();
     }
+
+    function normalizeHashtag(tag) {
+      return String(tag || "").trim().toLowerCase().replace(/^#+/, "");
+    }
+
+    function extractHashtags(text) {
+      const matches = String(text || "").match(/#[a-z0-9_]+/gi) || [];
+      return [...new Set(matches.map((tag) => normalizeHashtag(tag)).filter(Boolean))];
+    }
+
+    function matchesHashtagFilter(wind) {
+      if (!hashtagFilter) return true;
+      const fromField = Array.isArray(wind.hashtags) ? wind.hashtags : [];
+      const tags = fromField.length ? fromField : extractHashtags(wind.text);
+      return tags.includes(hashtagFilter);
+    }
+
 
     function clearCommentListeners() {
       commentUnsubscribers.forEach((unsubscribe) => unsubscribe());
@@ -238,6 +264,25 @@
       text.className = "wind-text";
       text.textContent = wind.text || "";
 
+      const hashtags = Array.isArray(wind.hashtags) && wind.hashtags.length
+        ? wind.hashtags
+        : extractHashtags(wind.text);
+      const hashtagsRow = document.createElement("div");
+      hashtagsRow.className = "wind-hashtags";
+      hashtags.forEach((tag) => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "hashtag-chip";
+        chip.textContent = `#${tag}`;
+        chip.addEventListener("click", () => {
+          setActiveView("explore");
+          hashtagFilter = tag;
+          hashtagSearchInput.value = `#${tag}`;
+          attachFeedListener(currentUser);
+        });
+        hashtagsRow.appendChild(chip);
+      });
+
       const actionBar = document.createElement("div");
       actionBar.className = "wind-actions";
 
@@ -278,6 +323,7 @@
       header.appendChild(time);
       card.appendChild(header);
       card.appendChild(text);
+      if (hashtags.length) card.appendChild(hashtagsRow);
       card.appendChild(actionBar);
       card.appendChild(commentsWrap);
 
@@ -346,12 +392,14 @@
       activeFeedView = view;
       homeTabBtn.classList.toggle("active", view === "home");
       exploreTabBtn.classList.toggle("active", view === "explore");
+      const showDiscover = view === "explore";
+      discoverSearch.classList.toggle("hidden", !showDiscover);
       if (view === "home") {
         feedTitle.textContent = "Home";
         feedSubtitle.textContent = "Winds from people you follow and who they follow.";
       } else {
         feedTitle.textContent = "Explore";
-        feedSubtitle.textContent = "All winds.";
+        feedSubtitle.textContent = hashtagFilter ? `Showing #${hashtagFilter}` : "All winds.";
       }
     }
 
@@ -374,6 +422,7 @@
           snapshot.forEach((doc) => {
             const wind = doc.data();
             if (activeFeedView === "home" && !matchesHomeFeed(wind)) return;
+            if (activeFeedView === "explore" && !matchesHashtagFilter(wind)) return;
             chatContainer.appendChild(renderWind(doc, currentUserLabel));
             renderedCount += 1;
           });
@@ -381,7 +430,7 @@
           if (renderedCount === 0) {
             showNotice(activeFeedView === "home"
               ? "No winds in Home yet."
-              : "No winds yet. Be the first to post.");
+              : (hashtagFilter ? `No winds for #${hashtagFilter}.` : "No winds yet. Be the first to post."));
           }
         },
         (error) => {
@@ -395,6 +444,7 @@
       await firebase.firestore().collection("winds").add({
         likes: 0,
         text,
+        hashtags: extractHashtags(text),
         user: user.displayName || user.email || user.uid || "Anonymous",
         time: firebase.firestore.FieldValue.serverTimestamp()
       });
@@ -406,6 +456,7 @@
         return;
       }
 
+      currentUser = user;
       setSidebarOpen(true);
       homeAuthors = await loadHomeAuthors(user);
       setActiveView("home");
@@ -429,6 +480,14 @@
 
       profileTabBtn.addEventListener("click", () => {
         window.location.href = "profile.html";
+      });
+
+      hashtagSearchInput.addEventListener("input", () => {
+        hashtagFilter = normalizeHashtag(hashtagSearchInput.value);
+        if (activeFeedView === "explore") {
+          setActiveView("explore");
+          attachFeedListener(user);
+        }
       });
 
       sendBtn.addEventListener("click", async () => {

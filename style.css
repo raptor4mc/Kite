@@ -1358,3 +1358,47 @@ textarea {
     display: none;
   }
 }
+
+/* ==================================================
+   HASHTAGS + DISCOVER SEARCH
+   ================================================== */
+.discover-search {
+  margin-bottom: 12px;
+  background: #0b1220;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+}
+
+.discover-search label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-soft);
+  margin-bottom: 6px;
+}
+
+.discover-search input {
+  width: 100%;
+  background: #020617;
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  color: var(--text);
+  padding: 8px 12px;
+}
+
+.wind-hashtags {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.hashtag-chip {
+  border: 1px solid #273b7a;
+  background: #0b1737;
+  color: #93c5fd;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
