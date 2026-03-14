@@ -1485,7 +1485,8 @@ body.light-mode .right-toolbar-note {
 }
 
 body:not(.light-mode) {
-  background: #020617;
+  /* Keep dark-mode text colors while allowing the global JPG background to show. */
+  color: #e5e7eb;
 }
 
 body:not(.light-mode) .feed-sidebar,
@@ -2047,4 +2048,47 @@ body {
   .profile-page-shell .right-toolbar {
     display: none;
   }
+}
+
+/* Home + Explore: keep picture only inside wind cards (not under toolbars) */
+body.feed-view {
+  background-image: none;
+  background-color: #1a1a28;
+}
+
+body.feed-view .feed-main {
+  background: rgba(8, 14, 30, 0.4);
+  border-left: none;
+  border-right: none;
+}
+
+body.feed-view .feed-main-inner {
+  background: transparent;
+}
+
+body.feed-view .wind-feed {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  padding: 10px 6px 24px;
+}
+
+body.feed-view .wind-card {
+  background-color: rgba(8, 14, 30, 0.72);
+  background-image:
+    linear-gradient(180deg, rgba(5, 8, 20, 0.34), rgba(35, 12, 10, 0.28)),
+    url("images/background.jpg");
+  background-position: center;
+  background-size: cover;
+}
+
+/* Keep Profile readable/solid and avoid accidental transparency regressions */
+body.profile-view .feed-main,
+body.profile-view .profile-main,
+body.profile-view .profile-feed-card,
+body.profile-view .profile-edit-panel,
+body.profile-view .profile-identity-card,
+body.profile-view .profile-tabs {
+  background: rgba(8, 14, 30, 0.72);
 }
