@@ -1259,3 +1259,33 @@ textarea {
     top: 10px;
   }
 }
+
+/* ==================================================
+   PROFILE V2
+   ================================================== */
+.profile-card-updated {
+  max-width: 560px;
+  gap: 14px;
+}
+
+.profile-avatar-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+.profile-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 2px solid var(--border-soft);
+  object-fit: cover;
+  background: #020617;
+}
+
+#descriptionValue {
+  max-width: 60%;
+  text-align: right;
+  font-weight: 500;
+  color: var(--text-soft);
+}
