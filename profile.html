@@ -7,14 +7,16 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main class="profile-layout">
-    <aside class="profile-sidebar">
-      <div class="profile-sidebar-brand" aria-label="Kite brand">🐦 <span>Kite</span></div>
+  <main class="feed-page profile-page-shell">
+    <aside class="feed-sidebar profile-sidebar" id="profileSidebar">
+      <div class="sidebar-top-row">
+        <div class="sidebar-brand" aria-label="Kite brand">🐦 <strong>Kite</strong></div>
+      </div>
 
-      <nav class="profile-nav" aria-label="Main navigation">
-        <button id="goHomeBtn" class="profile-nav-btn" type="button">🏠 <span>Home</span></button>
-        <button id="goExploreBtn" class="profile-nav-btn" type="button">🌎 <span>Explore</span></button>
-        <button class="profile-nav-btn active" type="button">👤 <span>Profile</span></button>
+      <nav class="feed-nav profile-nav" aria-label="Main navigation">
+        <button id="goHomeBtn" class="sidebar-btn" type="button">🏠 <span>Home</span></button>
+        <button id="goExploreBtn" class="sidebar-btn" type="button">🌎 <span>Explore</span></button>
+        <button class="sidebar-btn active" type="button">👤 <span>Profile</span></button>
       </nav>
 
       <button id="profileDarkModeBtn" class="secondary-btn" type="button">🌙 Dark Mode: On</button>
@@ -25,53 +27,62 @@
       </div>
     </aside>
 
-    <section class="profile-main">
-      <header class="profile-banner"></header>
+    <section class="feed-main profile-main">
+      <div class="feed-main-inner">
+        <header class="profile-banner"></header>
 
-      <section class="profile-identity-card">
-        <img id="profileAvatar" class="profile-avatar-large" alt="Profile picture" src="images/pfp/a.png" />
+        <section class="profile-identity-card">
+          <img id="profileAvatar" class="profile-avatar-large" alt="Profile picture" src="images/pfp/a.png" />
 
-        <div class="profile-headline">
-          <h1 id="nicknameValue">-</h1>
-          <p id="handleValue" class="profile-handle">@-</p>
-          <p id="descriptionValue" class="profile-description">-</p>
-          <p class="profile-meta">Kite account</p>
-        </div>
+          <div class="profile-headline">
+            <h1 id="nicknameValue">-</h1>
+            <p id="handleValue" class="profile-handle">@-</p>
+            <p id="descriptionValue" class="profile-description">-</p>
+            <p class="profile-meta">Kite account</p>
+          </div>
 
-        <button id="editProfileBtn" class="secondary-btn" type="button">Edit profile</button>
-      </section>
+          <button id="editProfileBtn" class="secondary-btn" type="button">Edit profile</button>
+        </section>
 
-      <section id="editPanel" class="profile-edit-panel hidden">
-        <h3>Edit profile</h3>
-        <div class="profile-edit-row">
-          <label>Nickname</label>
-          <input id="nicknameEditInput" type="text" maxlength="15" placeholder="Nickname" />
-          <small id="nicknameChangesLeft">Nickname changes left: 3</small>
-        </div>
-        <div class="profile-edit-row">
-          <label>@ handle</label>
-          <input id="handleEditInput" type="text" maxlength="24" placeholder="@yourhandle" />
-          <small id="handleChangesLeft">@ changes left: 3</small>
-        </div>
-        <div class="profile-edit-row">
-          <label>Description</label>
-          <textarea id="descriptionEditInput" maxlength="220" placeholder="About you..."></textarea>
-          <small id="descriptionChangesLeft">Description changes left: 3</small>
-        </div>
-        <div class="profile-edit-actions">
-          <button id="saveProfileBtn" class="primary-btn" type="button">Save profile</button>
-          <button id="cancelEditBtn" class="secondary-btn" type="button">Cancel</button>
-        </div>
-      </section>
+        <section id="editPanel" class="profile-edit-panel hidden">
+          <h3>Edit profile</h3>
+          <div class="profile-edit-row">
+            <label>Nickname</label>
+            <input id="nicknameEditInput" type="text" maxlength="15" placeholder="Nickname" />
+            <small id="nicknameChangesLeft">Nickname changes left: 3</small>
+          </div>
+          <div class="profile-edit-row">
+            <label>@ handle</label>
+            <input id="handleEditInput" type="text" maxlength="24" placeholder="@yourhandle" />
+            <small id="handleChangesLeft">@ changes left: 3</small>
+          </div>
+          <div class="profile-edit-row">
+            <label>Description</label>
+            <textarea id="descriptionEditInput" maxlength="220" placeholder="About you..."></textarea>
+            <small id="descriptionChangesLeft">Description changes left: 3</small>
+          </div>
+          <div class="profile-edit-actions">
+            <button id="saveProfileBtn" class="primary-btn" type="button">Save profile</button>
+            <button id="cancelEditBtn" class="secondary-btn" type="button">Cancel</button>
+          </div>
+        </section>
 
-      <section class="profile-tabs">
-        <button id="windsTabBtn" class="profile-tab active" type="button">Winds</button>
-        <button id="repliesTabBtn" class="profile-tab" type="button">Replies</button>
-      </section>
+        <section class="profile-tabs">
+          <button id="windsTabBtn" class="profile-tab active" type="button">Winds</button>
+          <button id="repliesTabBtn" class="profile-tab" type="button">Replies</button>
+        </section>
 
-      <section id="profileFeed" class="profile-feed"></section>
-      <p id="profileMsg" class="switch hidden"></p>
+        <section id="profileFeed" class="profile-feed"></section>
+        <p id="profileMsg" class="switch hidden"></p>
+      </div>
     </section>
+
+    <aside class="right-toolbar" aria-label="Search and tools">
+      <h3>Search</h3>
+      <input class="right-search" type="text" placeholder="Search @user/email or #hashtag" disabled />
+      <p class="right-toolbar-note">Profile view keeps the same toolbar layout as feed.</p>
+      <button type="button" class="secondary-btn" disabled>Clear Search</button>
+    </aside>
   </main>
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
