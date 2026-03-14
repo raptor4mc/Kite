@@ -2136,3 +2136,56 @@ body.feed-view .wind-card:hover {
   opacity: 0.65;
   pointer-events: none;
 }
+
+/* Cloud composer: uses your provided images/question_cloud.png asset */
+body.feed-view .wind-compose {
+  position: sticky;
+  top: 12px;
+  z-index: 5;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  background: transparent;
+  background-image: url("images/question_cloud.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+  min-height: 250px;
+  padding: 42px 48px 40px;
+}
+
+body.feed-view .wind-compose label {
+  margin-bottom: 12px;
+  color: #0f172a;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+body.feed-view .wind-compose textarea {
+  min-height: 96px;
+  background: rgba(255, 255, 255, 0.86);
+  color: #0f172a;
+  border: 1px solid rgba(148, 163, 184, 0.75);
+}
+
+body.feed-view .wind-compose-footer {
+  margin-top: 14px;
+}
+
+body.feed-view #charCounter {
+  color: #334155;
+  font-weight: 600;
+}
+
+body.feed-view #feedNotice {
+  color: #7c2d12;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  body.feed-view .wind-compose {
+    min-height: 220px;
+    padding: 34px 26px 30px;
+    background-size: cover;
+  }
+}
