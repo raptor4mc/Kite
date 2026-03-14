@@ -102,6 +102,7 @@
     let hashtagFilter = "";
     let globalSearchTerm = "";
     let darkModeEnabled = true;
+    let currentUserProfilePicture = "images/pfp/a.png";
 
     function showNotice(text) {
       feedNotice.textContent = text;
@@ -120,6 +121,12 @@
     function normalizeHashtag(tag) {
       return String(tag || "").trim().toLowerCase().replace(/^#+/, "");
     }
+
+    function avatarFromName(name) {
+      const letter = String(name || "a").trim().charAt(0).toLowerCase() || "a";
+      return `images/pfp/${letter}.png`;
+    }
+
 
     function extractHashtags(text) {
       const matches = String(text || "").match(/#[a-z0-9_]+/gi) || [];
@@ -254,8 +261,19 @@
       const header = document.createElement("div");
       header.className = "comment-header";
 
+      const authorWrap = document.createElement("div");
+      authorWrap.className = "author-wrap";
+
+      const avatar = document.createElement("img");
+      avatar.className = "author-avatar";
+      avatar.alt = "author avatar";
+      avatar.src = comment.profilePicture || avatarFromName(comment.user);
+
       const author = document.createElement("strong");
       author.textContent = normalizeId(comment.user) === normalizeId(currentUserLabel) ? "You" : (comment.user || "Anonymous");
+
+      authorWrap.appendChild(avatar);
+      authorWrap.appendChild(author);
 
       const time = document.createElement("span");
       time.textContent = window.formatTimestamp ? window.formatTimestamp(comment.time) : "now";
@@ -266,7 +284,7 @@
       const commentKey = commentDoc.ref.path;
       const commentLike = createLikeButton(comment.likes, likedCommentIds.has(commentKey));
 
-      header.appendChild(author);
+      header.appendChild(authorWrap);
       header.appendChild(time);
       row.appendChild(header);
       row.appendChild(text);
@@ -293,8 +311,19 @@
       const header = document.createElement("div");
       header.className = "wind-meta";
 
+      const authorWrap = document.createElement("div");
+      authorWrap.className = "author-wrap";
+
+      const avatar = document.createElement("img");
+      avatar.className = "author-avatar";
+      avatar.alt = "author avatar";
+      avatar.src = wind.profilePicture || avatarFromName(wind.user);
+
       const name = document.createElement("strong");
       name.textContent = normalizeId(wind.user) === normalizeId(currentUserLabel) ? "You" : (wind.user || "Anonymous");
+
+      authorWrap.appendChild(avatar);
+      authorWrap.appendChild(name);
 
       const time = document.createElement("span");
       time.textContent = window.formatTimestamp ? window.formatTimestamp(wind.time) : "now";
@@ -358,7 +387,7 @@
       commentsWrap.appendChild(commentsList);
       commentsWrap.appendChild(composer);
 
-      header.appendChild(name);
+      header.appendChild(authorWrap);
       header.appendChild(time);
       card.appendChild(header);
       card.appendChild(text);
@@ -396,7 +425,8 @@
             likes: 0,
             text: responseText,
             time: firebase.firestore.FieldValue.serverTimestamp(),
-            user: currentUserLabel
+            user: currentUserLabel,
+            profilePicture: currentUserProfilePicture
           });
           commentInput.value = "";
         } catch (error) {
@@ -486,6 +516,7 @@
         text,
         hashtags: extractHashtags(text),
         user: user.displayName || user.email || user.uid || "Anonymous",
+        profilePicture: currentUserProfilePicture,
         time: firebase.firestore.FieldValue.serverTimestamp()
       });
     }
@@ -497,6 +528,14 @@
       }
 
       currentUser = user;
+      try {
+        const userDoc = await firebase.firestore().collection("users").doc(user.uid).get();
+        const userData = userDoc.exists ? userDoc.data() : {};
+        currentUserProfilePicture = userData.profilePicture || avatarFromName(user.displayName || user.email || "a");
+      } catch (error) {
+        currentUserProfilePicture = avatarFromName(user.displayName || user.email || "a");
+      }
+
       const storedMode = localStorage.getItem("kite-dark-mode");
       setDarkMode(storedMode !== "off");
       setSidebarOpen(true);

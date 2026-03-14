@@ -1730,3 +1730,23 @@ body:not(.light-mode) .right-search {
     margin-top: 0;
   }
 }
+
+/* author info row for winds/comments */
+.author-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.author-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #0f172a;
+  border: 1px solid var(--border-soft);
+}
+
+.comment-header {
+  align-items: center;
+}
