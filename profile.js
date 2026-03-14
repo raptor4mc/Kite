@@ -26,6 +26,7 @@
   const goExploreBtn = document.getElementById("goExploreBtn");
   const goFeedBtn = document.getElementById("goFeedBtn");
   const logoutBtn = document.getElementById("logoutBtn");
+  const profileDarkModeBtn = document.getElementById("profileDarkModeBtn");
 
   const MAX_CHANGES = 3;
   const targetIdentity = String(new URLSearchParams(window.location.search).get("user") || "").trim();
@@ -53,6 +54,19 @@
   function normalizeHandle(value) {
     const raw = String(value || "").trim().replace(/^@+/, "");
     return raw.replace(/[^a-zA-Z0-9._]/g, "").toLowerCase();
+  }
+
+  function setDarkMode(enabled) {
+    document.body.classList.toggle("light-mode", !enabled);
+    localStorage.setItem("kite-dark-mode", enabled ? "on" : "off");
+    if (profileDarkModeBtn) {
+      profileDarkModeBtn.textContent = enabled ? "🌙 Dark Mode: On" : "☀️ Dark Mode: Off";
+    }
+  }
+
+  function applyStoredTheme() {
+    const storedMode = localStorage.getItem("kite-dark-mode");
+    setDarkMode(storedMode == null ? true : storedMode === "on");
   }
 
   function setMessage(text) {
@@ -315,6 +329,8 @@
     renderProfileFeed();
   }
 
+  applyStoredTheme();
+
   firebase.auth().onAuthStateChanged(async (user) => {
     if (!user) {
       window.location.href = "login.html";
@@ -423,6 +439,13 @@
 
     windsTabBtn.addEventListener("click", () => setActiveTab("winds"));
     repliesTabBtn.addEventListener("click", () => setActiveTab("replies"));
+
+    if (profileDarkModeBtn) {
+      profileDarkModeBtn.addEventListener("click", () => {
+        const enabled = !document.body.classList.contains("light-mode");
+        setDarkMode(!enabled);
+      });
+    }
 
     logoutBtn.addEventListener("click", async () => {
       await firebase.auth().signOut();
