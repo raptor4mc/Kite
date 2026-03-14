@@ -2430,3 +2430,25 @@ body.profile-view .profile-tab.active {
     gap: 10px;
   }
 }
+
+/* Own-wind delete action */
+body.feed-view .wind-delete-btn {
+  border: 1px solid rgba(248, 113, 113, 0.65);
+  background: rgba(127, 29, 29, 0.2);
+  color: #fecaca;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+body.feed-view .wind-delete-btn:hover {
+  background: rgba(127, 29, 29, 0.34);
+  border-color: rgba(248, 113, 113, 0.85);
+}
+
+body.feed-view .wind-delete-btn.pending {
+  opacity: 0.65;
+  pointer-events: none;
+}

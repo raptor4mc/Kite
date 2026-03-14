@@ -261,6 +261,28 @@
       });
     }
 
+    function canDeleteWind(wind, currentUserLabel) {
+      if (!currentUser) return false;
+      if (wind && wind.creatorUid && wind.creatorUid === currentUser.uid) return true;
+
+      const ownerIds = [
+        currentUser.uid,
+        currentUser.email,
+        currentUser.displayName,
+        currentUserLabel
+      ].map(normalizeId).filter(Boolean);
+
+      return ownerIds.includes(normalizeId(wind && wind.user));
+    }
+
+    async function deleteWindWithComments(windRef) {
+      const commentsSnap = await windRef.collection("comments").get();
+      const batch = firebase.firestore().batch();
+      commentsSnap.forEach((doc) => batch.delete(doc.ref));
+      batch.delete(windRef);
+      await batch.commit();
+    }
+
     async function loadHomeAuthors(user) {
       const db = firebase.firestore();
       const authors = new Set();
@@ -421,12 +443,37 @@
       actionBar.className = "wind-actions";
 
       const windLike = createLikeButton(wind.likes, likedWindIds.has(windDoc.id));
+      const ownWind = canDeleteWind(wind, currentUserLabel);
 
       const hint = document.createElement("span");
       hint.className = "wind-comments-hint";
       hint.textContent = "click wind to open comments";
 
       actionBar.appendChild(windLike.button);
+
+      if (ownWind) {
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "wind-delete-btn";
+        deleteBtn.textContent = "Delete";
+
+        deleteBtn.addEventListener("click", async () => {
+          if (deleteBtn.classList.contains("pending")) return;
+          if (!confirm("Delete this wind? This will also remove its comments.")) return;
+          deleteBtn.classList.add("pending");
+          try {
+            await deleteWindWithComments(windRef);
+            showNotice("Wind deleted.");
+          } catch (error) {
+            showNotice(`Unable to delete wind: ${error.message || "unknown error"}`);
+          } finally {
+            deleteBtn.classList.remove("pending");
+          }
+        });
+
+        actionBar.appendChild(deleteBtn);
+      }
+
       actionBar.appendChild(hint);
 
       const commentsWrap = document.createElement("div");
@@ -592,6 +639,7 @@
         text,
         hashtags: extractHashtags(text),
         user: user.displayName || user.email || user.uid || "Anonymous",
+        creatorUid: user.uid,
         profilePicture: currentUserProfilePicture,
         time: firebase.firestore.FieldValue.serverTimestamp()
       });
