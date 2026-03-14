@@ -2189,3 +2189,68 @@ body.feed-view #feedNotice {
     background-size: cover;
   }
 }
+
+/* Compose cloud alignment fix: keep cloud behind controls, remove harsh white box */
+body.feed-view .wind-compose {
+  background: transparent;
+  background-image: none;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  min-height: auto;
+  padding: 18px 18px 64px;
+  position: sticky;
+  top: 12px;
+  overflow: visible;
+}
+
+body.feed-view .wind-compose::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+  width: min(680px, 94%);
+  height: 170px;
+  background-image: url("images/question_cloud.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.feed-view .wind-compose > * {
+  position: relative;
+  z-index: 1;
+}
+
+body.feed-view .wind-compose textarea {
+  min-height: 96px;
+  background: rgba(2, 6, 23, 0.58);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+}
+
+body.feed-view .wind-compose textarea::placeholder {
+  color: #cbd5e1;
+}
+
+body.feed-view .wind-compose label,
+body.feed-view #charCounter,
+body.feed-view #feedNotice {
+  color: #e2e8f0;
+  text-shadow: none;
+}
+
+@media (max-width: 900px) {
+  body.feed-view .wind-compose {
+    padding: 14px 12px 56px;
+  }
+
+  body.feed-view .wind-compose::after {
+    width: 96%;
+    height: 130px;
+    bottom: -6px;
+  }
+}
