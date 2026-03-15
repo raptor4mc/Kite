@@ -57,6 +57,12 @@
       <input id="globalSearchInput" class="right-search" type="text" placeholder="Search @user/email or #hashtag" />
       <p class="right-toolbar-note">Use @name (or @gmail) to find user winds, and #tag for wind hashtags.</p>
       <button id="clearSearchBtn" type="button" class="secondary-btn">Clear Search</button>
+
+      <section class="notifications-panel" aria-label="Notifications">
+        <h3>Notifications</h3>
+        <p id="notificationEmpty" class="right-toolbar-note">No notifications yet.</p>
+        <div id="notificationList" class="notification-list"></div>
+      </section>
     </aside>
   </main>
 
@@ -93,6 +99,8 @@
     const globalSearchInput = document.getElementById("globalSearchInput");
     const clearSearchBtn = document.getElementById("clearSearchBtn");
     const darkModeBtn = document.getElementById("darkModeBtn");
+    const notificationList = document.getElementById("notificationList");
+    const notificationEmpty = document.getElementById("notificationEmpty");
 
     const MAX_WIND_LENGTH = 120;
     const LIKE_ICON = "images/ui/like.png";
@@ -110,6 +118,7 @@
     let globalSearchTerm = "";
     let darkModeEnabled = true;
     let currentUserProfilePicture = "images/pfp/a.png";
+    let unsubscribeNotifications = null;
 
     function likedWindsStorageKey() {
       return currentUser ? `${LIKED_WINDS_KEY_PREFIX}-${currentUser.uid}` : LIKED_WINDS_KEY_PREFIX;
@@ -219,6 +228,68 @@
     function clearCommentListeners() {
       commentUnsubscribers.forEach((unsubscribe) => unsubscribe());
       commentUnsubscribers.clear();
+    }
+
+    function renderNotificationItem(notification) {
+      const row = document.createElement("article");
+      row.className = "notification-item";
+
+      const message = document.createElement("p");
+      message.className = "notification-message";
+      message.textContent = notification.message || "New activity";
+
+      const meta = document.createElement("p");
+      meta.className = "notification-meta";
+      meta.textContent = window.formatTimestamp ? window.formatTimestamp(notification.time) : "now";
+
+      row.appendChild(message);
+      row.appendChild(meta);
+      return row;
+    }
+
+    function attachNotificationsListener(user) {
+      if (unsubscribeNotifications) {
+        unsubscribeNotifications();
+        unsubscribeNotifications = null;
+      }
+
+      unsubscribeNotifications = firebase.firestore()
+        .collection("users")
+        .doc(user.uid)
+        .collection("notifications")
+        .orderBy("time", "desc")
+        .limit(20)
+        .onSnapshot((snapshot) => {
+          notificationList.innerHTML = "";
+          if (snapshot.empty) {
+            notificationEmpty.classList.remove("hidden");
+            return;
+          }
+
+          notificationEmpty.classList.add("hidden");
+          snapshot.forEach((doc) => {
+            notificationList.appendChild(renderNotificationItem(doc.data()));
+          });
+        }, (error) => {
+          notificationEmpty.classList.remove("hidden");
+          notificationEmpty.textContent = `Notifications unavailable: ${error.message || "permission denied"}`;
+        });
+    }
+
+    async function createNotification(recipientUid, message, windId) {
+      if (!currentUser || !recipientUid || recipientUid === currentUser.uid) return;
+
+      await firebase.firestore()
+        .collection("users")
+        .doc(recipientUid)
+        .collection("notifications")
+        .add({
+          message,
+          windId: windId || "",
+          actorUid: currentUser.uid,
+          actorLabel: currentUser.displayName || currentUser.email || "Someone",
+          time: firebase.firestore.FieldValue.serverTimestamp()
+        });
     }
 
     function setSidebarOpen(open) {
@@ -374,6 +445,11 @@
           likedCommentIds.add(commentKey);
           saveLikedState();
           updateLikeVisual(commentLike.button, commentLike.icon, commentLike.count, true, (Number(commentLike.count.textContent) || 0) + 1);
+          await createNotification(
+            comment.creatorUid,
+            `${currentUser.displayName || currentUser.email || "Someone"} liked your response.`,
+            comment.windId || ""
+          );
         } catch (error) {
           commentLike.button.disabled = false;
           showNotice(`Unable to like response: ${error.message || "unknown error"}`);
@@ -527,6 +603,11 @@
           likedWindIds.add(windDoc.id);
           saveLikedState();
           updateLikeVisual(windLike.button, windLike.icon, windLike.count, true, (Number(windLike.count.textContent) || 0) + 1);
+          await createNotification(
+            wind.creatorUid,
+            `${currentUser.displayName || currentUser.email || "Someone"} liked your wind.`,
+            windDoc.id
+          );
         } catch (error) {
           windLike.button.disabled = false;
           showNotice(`Unable to like wind: ${error.message || "unknown error"}`);
@@ -549,8 +630,15 @@
             text: responseText,
             time: firebase.firestore.FieldValue.serverTimestamp(),
             user: currentUserLabel,
-            profilePicture: currentUserProfilePicture
+            profilePicture: currentUserProfilePicture,
+            creatorUid: currentUser.uid,
+            windId: windDoc.id
           });
+          await createNotification(
+            wind.creatorUid,
+            `${currentUser.displayName || currentUser.email || "Someone"} replied to your wind.`,
+            windDoc.id
+          );
           commentInput.value = "";
         } catch (error) {
           showNotice(`Unable to post response: ${error.message || "unknown error"}`);
@@ -668,6 +756,7 @@
       reportLoadStatus("Feed authors");
       setActiveView("home");
       attachFeedListener(user);
+      attachNotificationsListener(user);
 
       sidebarCloseBtn.addEventListener("click", () => setSidebarOpen(false));
       sidebarToggleBtn.addEventListener("click", () => {
