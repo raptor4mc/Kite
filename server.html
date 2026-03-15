@@ -49,11 +49,6 @@
           </div>
         </section>
 
-        <section id="discoverSearch" class="discover-search hidden">
-          <label for="hashtagSearchInput">Search hashtags in Explore</label>
-          <input id="hashtagSearchInput" type="text" placeholder="#kite" />
-        </section>
-
         <section class="wind-compose">
           <label for="chatInput">What's happening?</label>
           <textarea id="chatInput" maxlength="120" placeholder="What's happening right now?"></textarea>
@@ -107,8 +102,6 @@
     const profileTabBtn = document.getElementById("profileTabBtn");
     const feedTitle = document.getElementById("feedTitle");
     const feedSubtitle = document.getElementById("feedSubtitle");
-    const discoverSearch = document.getElementById("discoverSearch");
-    const hashtagSearchInput = document.getElementById("hashtagSearchInput");
     const feedPage = document.getElementById("feedPage");
     const sidebarCloseBtn = document.getElementById("sidebarCloseBtn");
     const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
@@ -671,7 +664,8 @@
         chip.addEventListener("click", () => {
           setActiveView("explore");
           hashtagFilter = tag;
-          hashtagSearchInput.value = `#${tag}`;
+          globalSearchTerm = `#${tag}`;
+          globalSearchInput.value = `#${tag}`;
           attachFeedListener(currentUser);
         });
         hashtagsRow.appendChild(chip);
@@ -835,8 +829,6 @@
       activeFeedView = view;
       homeTabBtn.classList.toggle("active", view === "home");
       exploreTabBtn.classList.toggle("active", view === "explore");
-      const showDiscover = view === "explore";
-      discoverSearch.classList.toggle("hidden", !showDiscover);
       if (view === "home") {
         feedTitle.textContent = "Home";
         feedSubtitle.textContent = "Smart-ranked: people you follow first, with discovery mixed in.";
@@ -948,7 +940,6 @@
 
       homeTabBtn.addEventListener("click", () => {
         hashtagFilter = "";
-        hashtagSearchInput.value = "";
         setActiveView("home");
         attachFeedListener(user);
       });
@@ -980,14 +971,6 @@
 
       darkModeBtn.addEventListener("click", () => {
         setDarkMode(!darkModeEnabled);
-      });
-
-      hashtagSearchInput.addEventListener("input", () => {
-        hashtagFilter = normalizeHashtag(hashtagSearchInput.value);
-        if (activeFeedView === "explore") {
-          setActiveView("explore");
-          attachFeedListener(user);
-        }
       });
 
       sendBtn.addEventListener("click", async () => {
