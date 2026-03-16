@@ -44,5 +44,16 @@
     <button onclick="location.href='login.html'">Login</button>
     <button onclick="location.href='signup.html'">Create Account</button>
   </div>
+  <script src="policy.js"></script>
+  <script>
+    window.addEventListener("DOMContentLoaded", async () => {
+      if (window.KITE_POLICY) {
+        await window.KITE_POLICY.requireLocalPolicyAcceptance({
+          title: "Welcome to Kite",
+          subtitle: "You must accept Kite policy before entering login or signup."
+        });
+      }
+    });
+  </script>
 </body>
 </html>

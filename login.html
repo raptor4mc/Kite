@@ -76,6 +76,11 @@
     const codeInput = document.getElementById("challengeCode");
     const rememberDevice = document.getElementById("rememberDevice");
 
+    window.KITE_POLICY.requireLocalPolicyAcceptance({
+      title: "Login Policy Gate",
+      subtitle: "Policy acceptance is required before logging in."
+    });
+
     try {
       toggle.onclick = () => {
         const hidden = passwordInput.type === "password";
@@ -101,8 +106,19 @@
       try {
         const policyResult = await window.KITE_POLICY.enforcePolicyForUser(user);
         if (!policyResult.allowed) {
-          errorMsg.textContent = policyResult.message || "Policy check failed.";
-          return;
+          if (policyResult.reason === "policy-not-accepted") {
+            const accepted = await window.KITE_POLICY.promptAndAcceptPolicyForUser(user, {
+              title: "Policy Updated",
+              subtitle: "Accept the updated policy to continue to your account."
+            });
+            if (!accepted) {
+              await firebase.auth().signOut();
+              return;
+            }
+          } else {
+            errorMsg.textContent = policyResult.message || "Policy check failed.";
+            return;
+          }
         }
         window.KITE_POLICY.setSessionCookie(user.uid, 30);
         window.location.href = "profile.html";

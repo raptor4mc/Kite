@@ -77,6 +77,11 @@
     const finishProfileBtn = document.getElementById("finishProfileBtn");
     const acceptPolicy = document.getElementById("acceptPolicy");
 
+    window.KITE_POLICY.requireLocalPolicyAcceptance({
+      title: "Sign-up Policy Gate",
+      subtitle: "You must accept Kite policy before creating an account."
+    });
+
     let createdUser = null;
     let createdNickname = "";
     let createdEmail = "";
@@ -106,10 +111,6 @@
 
       if (password !== confirmPassword) {
         errorMsg.textContent = "Passwords do not match.";
-        return;
-      }
-      if (!acceptPolicy.checked) {
-        errorMsg.textContent = "You must accept the policy to join Kite.";
         return;
       }
       if (window.containsBlacklistedWords && window.containsBlacklistedWords(nickname).flagged) {

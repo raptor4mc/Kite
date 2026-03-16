@@ -916,9 +916,21 @@
       currentUser = user;
       const policyResult = await window.KITE_POLICY.enforcePolicyForUser(user);
       if (!policyResult.allowed) {
-        alert(policyResult.message || "Policy check failed.");
-        window.location.href = "login.html";
-        return;
+        if (policyResult.reason === "policy-not-accepted") {
+          const accepted = await window.KITE_POLICY.promptAndAcceptPolicyForUser(user, {
+            title: "Policy Updated",
+            subtitle: "The policy changed while you were in Kite. Accept the update to continue using the feed."
+          });
+          if (!accepted) {
+            await firebase.auth().signOut();
+            window.location.href = "login.html";
+            return;
+          }
+        } else {
+          alert(policyResult.message || "Policy check failed.");
+          window.location.href = "login.html";
+          return;
+        }
       }
       window.KITE_POLICY.setSessionCookie(user.uid, 30);
       loadLikedState();
