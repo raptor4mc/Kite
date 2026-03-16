@@ -28,6 +28,7 @@
         </div>
 
         <!-- SAME LABEL AS BEFORE -->
+        <label class="remember-row"><input type="checkbox" id="acceptPolicy" required /> I accept Kite policy and understand violating it can terminate my account.</label>
         <button type="submit" class="primary-btn" id="createAccountBtn">Sign Up</button>
         </div>
 
@@ -74,6 +75,7 @@
     const stepOne = document.getElementById("signupStepOne");
     const stepTwo = document.getElementById("signupStepTwo");
     const finishProfileBtn = document.getElementById("finishProfileBtn");
+    const acceptPolicy = document.getElementById("acceptPolicy");
 
     window.KITE_POLICY.requireLocalPolicyAcceptance({
       title: "Sign-up Policy Gate",
